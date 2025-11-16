@@ -1,3 +1,5 @@
 .idea/
 
 prototypes/test-videos/
+prototypes/pose/mediapipe-pose/pose_frames
+prototypes/pose/movenet/pose_frames
