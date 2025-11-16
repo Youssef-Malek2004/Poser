@@ -1,0 +1,1 @@
+This directory will be for our Mobile Application
