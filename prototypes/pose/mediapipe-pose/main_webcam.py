@@ -1,19 +1,17 @@
 import cv2
 from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
+from services.pose_engine.exercises.PushUpStartDetector import PushUpStartDetector
 
 
 def main():
-    backend = MediaPipePoseBackend()
+    detector = PushUpStartDetector()
+    backend = MediaPipePoseBackend(exercise_detector=detector)
 
     cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
         print("Cannot open webcam")
         return
-
-    # Optional: set resolution
-    # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     while True:
         ret, frame_bgr = cap.read()
@@ -22,11 +20,23 @@ def main():
             break
 
         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-
         landmarks = backend.process(frame_rgb)
 
         if landmarks:
+            current_reps = detector.update_reps(landmarks)
+
             drawn_bgr = backend.draw(frame_rgb, landmarks)
+
+            cv2.putText(
+                drawn_bgr,
+                f"Reps: {current_reps}",
+                (30, 80),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1.0,
+                (0, 255, 0),
+                2,
+                cv2.LINE_AA,
+            )
         else:
             drawn_bgr = frame_bgr
 

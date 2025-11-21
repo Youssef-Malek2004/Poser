@@ -1,14 +1,17 @@
 from services.pose_engine.core.VideoProcessor import VideoProcessor
 from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
+from services.pose_engine.exercises.PushUpStartDetector import PushUpStartDetector
 
 def main():
     video_path = "../../test-videos/pushup-video.mp4"
 
-    backend = MediaPipePoseBackend()
+    detector = PushUpStartDetector()
+    backend = MediaPipePoseBackend(exercise_detector=detector)
+
     processor = VideoProcessor(
         pose_backend=backend,
         target_fps=15,
-        resize_to=(1280, 480),
+        # resize_to=(1280, 480),
         save_frames=True,
         output_dir="pose_frames"
     )
@@ -31,6 +34,15 @@ def main():
             print("  frame_idx:", first_non_empty["frame_idx"])
             print("  time_sec:", first_non_empty["time_sec"])
             print("  num_landmarks:", len(first_non_empty["landmarks"]))
+
+        # --- Use generic rep counter over all frames ---
+        for frame in pose_data:
+            landmarks = frame.get("landmarks", [])
+            if not landmarks:
+                continue
+            detector.update_reps(landmarks)
+
+        print(f"\nTotal push-up reps detected: {detector.reps}")
 
 if __name__ == "__main__":
     main()
