@@ -1,11 +1,9 @@
 from typing import List, Optional
 import numpy as np
-import mediapipe as mp
 
 from services.pose_engine.core.BackendInterface import Landmark
 from services.pose_engine.exercises.ExerciseDetector import ExerciseDetector
-
-mp_pose = mp.solutions.pose
+from services.pose_engine.core.joints import BodyJoint
 
 
 class PushUpStartDetector(ExerciseDetector):
@@ -23,14 +21,12 @@ class PushUpStartDetector(ExerciseDetector):
         self.min_hip_angle   = base_angle - tolerance
         self.min_knee_angle  = base_angle - tolerance
 
-
-
     def _get_point(
         self,
         landmarks: List[Landmark],
-        lm_enum: mp_pose.PoseLandmark,
+        joint: BodyJoint,
     ) -> Optional[np.ndarray]:
-        idx = lm_enum.value
+        idx = int(joint)
         if idx >= len(landmarks):
             return None
 
@@ -61,25 +57,25 @@ class PushUpStartDetector(ExerciseDetector):
         cos_angle = float(np.clip(cos_angle, -1.0, 1.0))
         return float(np.degrees(np.arccos(cos_angle)))
 
-    def in_start_position(self, landmarks: List[Landmark]) -> bool:
-        # Grab key joints
-        l_shoulder = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_SHOULDER)
-        r_shoulder = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_SHOULDER)
+    def in_start_position(self, landmarks: List[Landmark]):
+        # Grab key joints (using backend-agnostic joints)
+        l_shoulder = self._get_point(landmarks, BodyJoint.LEFT_SHOULDER)
+        r_shoulder = self._get_point(landmarks, BodyJoint.RIGHT_SHOULDER)
 
-        l_elbow = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_ELBOW)
-        r_elbow = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_ELBOW)
+        l_elbow = self._get_point(landmarks, BodyJoint.LEFT_ELBOW)
+        r_elbow = self._get_point(landmarks, BodyJoint.RIGHT_ELBOW)
 
-        l_wrist = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_WRIST)
-        r_wrist = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_WRIST)
+        l_wrist = self._get_point(landmarks, BodyJoint.LEFT_WRIST)
+        r_wrist = self._get_point(landmarks, BodyJoint.RIGHT_WRIST)
 
-        l_hip = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_HIP)
-        r_hip = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_HIP)
+        l_hip = self._get_point(landmarks, BodyJoint.LEFT_HIP)
+        r_hip = self._get_point(landmarks, BodyJoint.RIGHT_HIP)
 
-        l_knee = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_KNEE)
-        r_knee = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_KNEE)
+        l_knee = self._get_point(landmarks, BodyJoint.LEFT_KNEE)
+        r_knee = self._get_point(landmarks, BodyJoint.RIGHT_KNEE)
 
-        l_ankle = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_ANKLE)
-        r_ankle = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_ANKLE)
+        l_ankle = self._get_point(landmarks, BodyJoint.LEFT_ANKLE)
+        r_ankle = self._get_point(landmarks, BodyJoint.RIGHT_ANKLE)
 
         # Elbow angles: shoulder - elbow - wrist
         left_elbow_angle = self._angle(l_shoulder, l_elbow, l_wrist) if l_elbow is not None else None
@@ -128,24 +124,24 @@ class PushUpStartDetector(ExerciseDetector):
         return result
 
     def in_end_position(self, landmarks: List[Landmark]):
-        # Grab key joints
-        l_shoulder = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_SHOULDER)
-        r_shoulder = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_SHOULDER)
+        # Grab key joints (backend-agnostic)
+        l_shoulder = self._get_point(landmarks, BodyJoint.LEFT_SHOULDER)
+        r_shoulder = self._get_point(landmarks, BodyJoint.RIGHT_SHOULDER)
 
-        l_elbow = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_ELBOW)
-        r_elbow = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_ELBOW)
+        l_elbow = self._get_point(landmarks, BodyJoint.LEFT_ELBOW)
+        r_elbow = self._get_point(landmarks, BodyJoint.RIGHT_ELBOW)
 
-        l_wrist = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_WRIST)
-        r_wrist = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_WRIST)
+        l_wrist = self._get_point(landmarks, BodyJoint.LEFT_WRIST)
+        r_wrist = self._get_point(landmarks, BodyJoint.RIGHT_WRIST)
 
-        l_hip = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_HIP)
-        r_hip = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_HIP)
+        l_hip = self._get_point(landmarks, BodyJoint.LEFT_HIP)
+        r_hip = self._get_point(landmarks, BodyJoint.RIGHT_HIP)
 
-        l_knee = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_KNEE)
-        r_knee = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_KNEE)
+        l_knee = self._get_point(landmarks, BodyJoint.LEFT_KNEE)
+        r_knee = self._get_point(landmarks, BodyJoint.RIGHT_KNEE)
 
-        l_ankle = self._get_point(landmarks, mp_pose.PoseLandmark.LEFT_ANKLE)
-        r_ankle = self._get_point(landmarks, mp_pose.PoseLandmark.RIGHT_ANKLE)
+        l_ankle = self._get_point(landmarks, BodyJoint.LEFT_ANKLE)
+        r_ankle = self._get_point(landmarks, BodyJoint.RIGHT_ANKLE)
 
         # Elbow angles: shoulder - elbow - wrist
         left_elbow_angle = self._angle(l_shoulder, l_elbow, l_wrist) if l_elbow is not None else None
@@ -177,12 +173,6 @@ class PushUpStartDetector(ExerciseDetector):
             return median_angle <= max_angle
 
         # --- End-position thresholds ---
-        # Start position: elbows straight = angle >= self.min_elbow_angle
-        # End position: elbows should be significantly bent.
-        # We set "bottom" threshold to be some margin below the straight threshold.
-        # Example with base_angle=160 and elbow_tolerance=15:
-        #   self.min_elbow_angle = 145
-        #   bottom_elbow_max ≈ 105  (about 40° more flexed)
         bottom_elbow_max = self.min_elbow_angle - 40.0
 
         elbows_bent = side_ok_max(left_elbow_angle, right_elbow_angle, bottom_elbow_max)
@@ -210,4 +200,3 @@ class PushUpStartDetector(ExerciseDetector):
         }
 
         return result
-
