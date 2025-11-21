@@ -1,6 +1,6 @@
 import cv2
 from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
-from services.pose_engine.exercises.PushUpStartDetector import PushUpStartDetector
+from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
 
 
 def main():

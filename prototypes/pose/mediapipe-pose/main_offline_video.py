@@ -1,6 +1,6 @@
 from services.pose_engine.core.VideoProcessor import VideoProcessor
 from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
-from services.pose_engine.exercises.PushUpStartDetector import PushUpStartDetector
+from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
 
 def main():
     video_path = "../../test-videos/pushup-video.mp4"
@@ -35,7 +35,6 @@ def main():
             print("  time_sec:", first_non_empty["time_sec"])
             print("  num_landmarks:", len(first_non_empty["landmarks"]))
 
-        # --- Use generic rep counter over all frames ---
         for frame in pose_data:
             landmarks = frame.get("landmarks", [])
             if not landmarks:
