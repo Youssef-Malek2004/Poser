@@ -1,5 +1,5 @@
 def main():
-    print('Hello Boro')
+    print('This is MoveNet main webcam script.')
 
 if __name__ == '__main__':
     main()
