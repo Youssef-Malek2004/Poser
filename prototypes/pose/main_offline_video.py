@@ -1,19 +1,32 @@
 from services.pose_engine.core.VideoProcessor import VideoProcessor
-from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
 from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
+from services.pose_engine.exercises.LatPullDownDetector import LatPullDownDetector
+from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
+from services.pose_engine.core.MoveNetPoseBackend import MoveNetPoseBackend
 
-def main():
-    video_path = "../../test-videos/pushup-video.mp4"
+def main(*, detector: str, backend: str):
+    video_path = "prototypes/test-videos/pushup2.mp4"
 
-    detector = PushUpStartDetector()
-    backend = MediaPipePoseBackend(exercise_detector=detector)
+    if detector == "pushup":
+        detector = PushUpStartDetector()
+    elif detector == "latpulldown":
+        detector = LatPullDownDetector()
+    else:
+        raise ValueError(f"Unknown detector: {detector}")
+    
+    if backend == "mediapipe":
+        backend = MediaPipePoseBackend(exercise_detector=detector)
+    elif backend == "movenet":
+        backend = MoveNetPoseBackend(exercise_detector=detector)
+    else:
+        raise ValueError(f"Unknown backend: {backend}")
 
     processor = VideoProcessor(
         pose_backend=backend,
         target_fps=15,
         # resize_to=(1280, 480),
         save_frames=True,
-        output_dir="pose_frames"
+        output_dir="prototypes/pose/pose_frames",
     )
 
     pose_data = processor.process_video(video_path)

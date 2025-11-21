@@ -1,4 +1,4 @@
-from prototypes.pose.mediapipe_pose.main_webcam import main
-
+from prototypes.pose.main_webcam import main as run_webcam
+from prototypes.pose.main_offline_video import main as run_offline_video
 if __name__ == '__main__':
-   main()
+   run_offline_video(detector="pushup", backend="mediapipe")
