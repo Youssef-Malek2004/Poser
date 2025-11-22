@@ -3,7 +3,7 @@ import numpy as np
 
 from services.pose_engine.core.BackendInterface import Landmark
 from services.pose_engine.exercises.ExerciseDetector import ExerciseDetector
-from services.pose_engine.core.joints import BodyJoint
+from services.pose_engine.core.joints import BodyJointMoveNet
 
 
 class LatPullDownDetector(ExerciseDetector):
@@ -12,7 +12,7 @@ class LatPullDownDetector(ExerciseDetector):
         start_elbow_angle: float = 160.0,
         end_elbow_angle: float = 50.0,
         elbow_tolerance: float = 20.0,
-        min_visibility: float = 0.6,
+        min_visibility: float = 0.2,
     ):
         """
         Lat Pull Down Detector
@@ -36,7 +36,7 @@ class LatPullDownDetector(ExerciseDetector):
     def _get_point(
         self,
         landmarks: List[Landmark],
-        joint: BodyJoint,
+        joint: BodyJointMoveNet,
     ) -> Optional[np.ndarray]:
         """Extract 2D point from landmarks for a given joint."""
         idx = int(joint)
@@ -90,14 +90,14 @@ class LatPullDownDetector(ExerciseDetector):
         - Wrists should be above shoulders
         """
         # Get key joints
-        l_shoulder = self._get_point(landmarks, BodyJoint.LEFT_SHOULDER)
-        r_shoulder = self._get_point(landmarks, BodyJoint.RIGHT_SHOULDER)
+        l_shoulder = self._get_point(landmarks, BodyJointMoveNet.LEFT_SHOULDER)
+        r_shoulder = self._get_point(landmarks, BodyJointMoveNet.RIGHT_SHOULDER)
         
-        l_elbow = self._get_point(landmarks, BodyJoint.LEFT_ELBOW)
-        r_elbow = self._get_point(landmarks, BodyJoint.RIGHT_ELBOW)
+        l_elbow = self._get_point(landmarks, BodyJointMoveNet.LEFT_ELBOW)
+        r_elbow = self._get_point(landmarks, BodyJointMoveNet.RIGHT_ELBOW)
         
-        l_wrist = self._get_point(landmarks, BodyJoint.LEFT_WRIST)
-        r_wrist = self._get_point(landmarks, BodyJoint.RIGHT_WRIST)
+        l_wrist = self._get_point(landmarks, BodyJointMoveNet.LEFT_WRIST)
+        r_wrist = self._get_point(landmarks, BodyJointMoveNet.RIGHT_WRIST)
 
         # Calculate elbow angles: shoulder - elbow - wrist
         left_elbow_angle = self._angle(l_shoulder, l_elbow, l_wrist) if l_elbow is not None else None
@@ -150,14 +150,14 @@ class LatPullDownDetector(ExerciseDetector):
         - Wrists should be near or below shoulders
         """
         # Get key joints
-        l_shoulder = self._get_point(landmarks, BodyJoint.LEFT_SHOULDER)
-        r_shoulder = self._get_point(landmarks, BodyJoint.RIGHT_SHOULDER)
+        l_shoulder = self._get_point(landmarks, BodyJointMoveNet.LEFT_SHOULDER)
+        r_shoulder = self._get_point(landmarks, BodyJointMoveNet.RIGHT_SHOULDER)
         
-        l_elbow = self._get_point(landmarks, BodyJoint.LEFT_ELBOW)
-        r_elbow = self._get_point(landmarks, BodyJoint.RIGHT_ELBOW)
+        l_elbow = self._get_point(landmarks, BodyJointMoveNet.LEFT_ELBOW)
+        r_elbow = self._get_point(landmarks, BodyJointMoveNet.RIGHT_ELBOW)
         
-        l_wrist = self._get_point(landmarks, BodyJoint.LEFT_WRIST)
-        r_wrist = self._get_point(landmarks, BodyJoint.RIGHT_WRIST)
+        l_wrist = self._get_point(landmarks, BodyJointMoveNet.LEFT_WRIST)
+        r_wrist = self._get_point(landmarks, BodyJointMoveNet.RIGHT_WRIST)
 
         # Calculate elbow angles: shoulder - elbow - wrist
         left_elbow_angle = self._angle(l_shoulder, l_elbow, l_wrist) if l_elbow is not None else None

@@ -2,7 +2,7 @@ from services.pose_engine.core.VideoProcessor import VideoProcessor
 from services.pose_engine.exercises.PushUpDetectorMoveNet import PushUpStartDetector
 from services.pose_engine.exercises.LatPullDownDetector import LatPullDownDetector
 def main(*, detector: str, backend: str):
-    video_path = "prototypes/test-videos/pushup2.mp4"
+    video_path = "prototypes/test-videos/latpulldown.mp4"
 
     if detector == "pushup":
         detector = PushUpStartDetector()
@@ -53,7 +53,7 @@ def main(*, detector: str, backend: str):
                 continue
             detector.update_reps(landmarks)
 
-        print(f"\nTotal push-up reps detected: {detector.reps}")
+        print(f"\nTotal reps detected: {detector.reps}")
 
 if __name__ == "__main__":
     main()
