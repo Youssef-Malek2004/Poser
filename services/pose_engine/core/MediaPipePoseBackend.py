@@ -4,6 +4,7 @@ from typing import List
 import numpy as np
 
 from services.pose_engine.core.BackendInterface import PoseBackend, Landmark
+from services.pose_engine.exercises.ExerciseDetector import ExerciseDetector
 from mediapipe.framework.formats import landmark_pb2
 
 mp_drawing = mp.solutions.drawing_utils
@@ -11,7 +12,7 @@ mp_pose = mp.solutions.pose
 
 
 class MediaPipePoseBackend(PoseBackend):
-    def __init__(self, exercise_detector: "ExerciseDetector | None" = None):
+    def __init__(self, exercise_detector: ExerciseDetector | None = None):
         self._pose = mp_pose.Pose(
             static_image_mode=False,
             model_complexity=1,
