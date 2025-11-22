@@ -34,10 +34,41 @@ class MoveNetPoseBackend(PoseBackend):
         self.interpreter.invoke()
         # Get the model prediction.
         keypoints_with_scores = self.interpreter.get_tensor(output_details[0]["index"])
+        
+        MOVENET_TO_MEDIAPIPE = {
+            0: 0,   # nose -> NOSE
+            1: 2,   # left_eye -> LEFT_EYE
+            2: 5,   # right_eye -> RIGHT_EYE
+            3: 7,   # left_ear -> LEFT_EAR
+            4: 8,   # right_ear -> RIGHT_EAR
+            5: 11,  # left_shoulder -> LEFT_SHOULDER
+            6: 12,  # right_shoulder -> RIGHT_SHOULDER
+            7: 13,  # left_elbow -> LEFT_ELBOW
+            8: 14,  # right_elbow -> RIGHT_ELBOW
+            9: 15,  # left_wrist -> LEFT_WRIST
+            10: 16, # right_wrist -> RIGHT_WRIST
+            11: 23, # left_hip -> LEFT_HIP
+            12: 24, # right_hip -> RIGHT_HIP
+            13: 25, # left_knee -> LEFT_KNEE
+            14: 26, # right_knee -> RIGHT_KNEE
+            15: 27, # left_ankle -> LEFT_ANKLE
+            16: 28, # right_ankle -> RIGHT_ANKLE
+        }
+        
+        # Initialize with 33 landmarks (MediaPipe format), set missing ones to zero visibility
         movenet_landmarks = [
-            Landmark(x=float(kp[1]), y=float(kp[0]), z=0.0, visibility=float(kp[2]))
-            for kp in keypoints_with_scores[0][0]
+            Landmark(x=0.0, y=0.0, z=0.0, visibility=0.0) for _ in range(33)
         ]
+        
+        # Map MoveNet keypoints to MediaPipe indices
+        for movenet_idx, kp in enumerate(keypoints_with_scores[0][0]):
+            mediapipe_idx = MOVENET_TO_MEDIAPIPE[movenet_idx]
+            movenet_landmarks[mediapipe_idx] = Landmark(
+            x=float(kp[1]), 
+            y=float(kp[0]), 
+            z=0.0, 
+            visibility=float(kp[2])
+            )
 
         return movenet_landmarks
 

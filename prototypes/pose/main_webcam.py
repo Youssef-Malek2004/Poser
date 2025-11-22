@@ -1,12 +1,17 @@
 import cv2
-from services.pose_engine.exercises.PushUpDetectorMoveNet import PushUpStartDetector
-from services.pose_engine.exercises.LatPullDownDetectorMoveNet import LatPullDownDetector
+from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
+from services.pose_engine.exercises.LatPullDownDetector import LatPullDownDetector
 
 def main(*, detector: str = "pushup", backend: str = "mediapipe"):
+    if backend == 'mediapipe':
+        min_visibility = 0.6
+    else:
+        min_visibility = 0.2
+        
     if detector == "pushup":
-        detector = PushUpStartDetector()
+        detector = PushUpStartDetector(min_visibility=min_visibility)
     elif detector == "latpulldown":
-        detector = LatPullDownDetector()
+        detector = LatPullDownDetector(min_visibility=min_visibility)
     else:
         raise ValueError(f"Unknown detector: {detector}")
     

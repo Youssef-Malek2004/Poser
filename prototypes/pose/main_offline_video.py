@@ -1,13 +1,17 @@
 from services.pose_engine.core.VideoProcessor import VideoProcessor
-from services.pose_engine.exercises.PushUpDetectorMoveNet import PushUpStartDetector
+from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
 from services.pose_engine.exercises.LatPullDownDetector import LatPullDownDetector
-def main(*, detector: str, backend: str):
-    video_path = "prototypes/test-videos/latpulldown.mp4"
+def main(*, detector: str, backend: str, video_name: str = None):
+    video_path = f"prototypes/test-videos/{video_name}.mp4"
+    if backend == 'mediapipe':
+        min_visibility = 0.6
+    else:
+        min_visibility = 0.2
 
     if detector == "pushup":
-        detector = PushUpStartDetector()
+        detector = PushUpStartDetector(min_visibility=min_visibility)
     elif detector == "latpulldown":
-        detector = LatPullDownDetector()
+        detector = LatPullDownDetector(min_visibility=min_visibility)
     else:
         raise ValueError(f"Unknown detector: {detector}")
     
