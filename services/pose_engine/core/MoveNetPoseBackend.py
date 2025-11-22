@@ -34,7 +34,7 @@ class MoveNetPoseBackend(PoseBackend):
         self.interpreter.invoke()
         # Get the model prediction.
         keypoints_with_scores = self.interpreter.get_tensor(output_details[0]["index"])
-        
+
         MOVENET_TO_MEDIAPIPE = {
             0: 0,   # nose -> NOSE
             1: 2,   # left_eye -> LEFT_EYE
@@ -217,25 +217,28 @@ class MoveNetPoseBackend(PoseBackend):
     def _draw_connections(
         self, frame_rgb: np.ndarray, landmarks: List[Landmark], confidence_threshold
     ) -> np.ndarray:
+        # Use BodyJoint indices (0-32) since landmarks array is mapped to BodyJoint format
+        # These connections match the skeleton structure for the 17 MoveNet keypoints
         KEYPOINT_EDGE_INDS_TO_COLOR = {
-            (0, 1): "m",
-            (0, 2): "c",
-            (1, 3): "m",
-            (2, 4): "c",
-            (0, 5): "m",
-            (0, 6): "c",
-            (5, 7): "m",
-            (7, 9): "m",
-            (6, 8): "c",
-            (8, 10): "c",
-            (5, 6): "y",
-            (5, 11): "m",
-            (6, 12): "c",
-            (11, 12): "y",
-            (11, 13): "m",
-            (13, 15): "m",
-            (12, 14): "c",
-            (14, 16): "c",
+            # Face connections
+            (0, 2): "m",
+            (0, 5): "c",
+            (2, 7): "m",
+            (5, 8): "c",
+            (0,11): "m",
+            (0,12): "c",
+            (11,13): "m",
+            (13,15): "m",
+            (12,14): "c",
+            (14,16): "c",
+            (11,12): "y",
+            (11,23): "m",
+            (12,24): "c",
+            (23,24): "y",
+            (23,25): "m",
+            (25,27): "m",
+            (24,26): "c",
+            (26,28): "c"
         }
 
         height, width, _ = frame_rgb.shape
