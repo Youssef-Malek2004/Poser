@@ -1,5 +1,5 @@
 import cv2
-from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
+from services.pose_engine.exercises.PushUpDetectorMoveNet import PushUpStartDetector
 from services.pose_engine.exercises.LatPullDownDetector import LatPullDownDetector
 
 def main(*, detector: str = "pushup", backend: str = "mediapipe"):

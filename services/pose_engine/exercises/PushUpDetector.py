@@ -3,7 +3,7 @@ import numpy as np
 
 from services.pose_engine.core.BackendInterface import Landmark
 from services.pose_engine.exercises.ExerciseDetector import ExerciseDetector
-from services.pose_engine.core.joints import BodyJoint, BodyJointMoveNet
+from services.pose_engine.core.joints import BodyJoint
 
 
 class PushUpStartDetector(ExerciseDetector):
@@ -59,23 +59,23 @@ class PushUpStartDetector(ExerciseDetector):
 
     def in_start_position(self, landmarks: List[Landmark]):
         # Grab key joints (using backend-agnostic joints)
-        l_shoulder = self._get_point(landmarks, BodyJointMoveNet.LEFT_SHOULDER)
-        r_shoulder = self._get_point(landmarks, BodyJointMoveNet.RIGHT_SHOULDER)
+        l_shoulder = self._get_point(landmarks, BodyJoint.LEFT_SHOULDER)
+        r_shoulder = self._get_point(landmarks, BodyJoint.RIGHT_SHOULDER)
 
-        l_elbow = self._get_point(landmarks, BodyJointMoveNet.LEFT_ELBOW)
-        r_elbow = self._get_point(landmarks, BodyJointMoveNet.RIGHT_ELBOW)
+        l_elbow = self._get_point(landmarks, BodyJoint.LEFT_ELBOW)
+        r_elbow = self._get_point(landmarks, BodyJoint.RIGHT_ELBOW)
 
-        l_wrist = self._get_point(landmarks, BodyJointMoveNet.LEFT_WRIST)
-        r_wrist = self._get_point(landmarks, BodyJointMoveNet.RIGHT_WRIST)
+        l_wrist = self._get_point(landmarks, BodyJoint.LEFT_WRIST)
+        r_wrist = self._get_point(landmarks, BodyJoint.RIGHT_WRIST)
 
-        l_hip = self._get_point(landmarks, BodyJointMoveNet.LEFT_HIP)
-        r_hip = self._get_point(landmarks, BodyJointMoveNet.RIGHT_HIP)
+        l_hip = self._get_point(landmarks, BodyJoint.LEFT_HIP)
+        r_hip = self._get_point(landmarks, BodyJoint.RIGHT_HIP)
 
-        l_knee = self._get_point(landmarks, BodyJointMoveNet.LEFT_KNEE)
-        r_knee = self._get_point(landmarks, BodyJointMoveNet.RIGHT_KNEE)
+        l_knee = self._get_point(landmarks, BodyJoint.LEFT_KNEE)
+        r_knee = self._get_point(landmarks, BodyJoint.RIGHT_KNEE)
 
-        l_ankle = self._get_point(landmarks, BodyJointMoveNet.LEFT_ANKLE)
-        r_ankle = self._get_point(landmarks, BodyJointMoveNet.RIGHT_ANKLE)
+        l_ankle = self._get_point(landmarks, BodyJoint.LEFT_ANKLE)
+        r_ankle = self._get_point(landmarks, BodyJoint.RIGHT_ANKLE)
 
         # Elbow angles: shoulder - elbow - wrist
         left_elbow_angle = self._angle(l_shoulder, l_elbow, l_wrist) if l_elbow is not None else None
@@ -125,23 +125,23 @@ class PushUpStartDetector(ExerciseDetector):
 
     def in_end_position(self, landmarks: List[Landmark]):
         # Grab key joints (backend-agnostic)
-        l_shoulder = self._get_point(landmarks, BodyJointMoveNet.LEFT_SHOULDER)
-        r_shoulder = self._get_point(landmarks, BodyJointMoveNet.RIGHT_SHOULDER)
+        l_shoulder = self._get_point(landmarks, BodyJoint.LEFT_SHOULDER)
+        r_shoulder = self._get_point(landmarks, BodyJoint.RIGHT_SHOULDER)
 
-        l_elbow = self._get_point(landmarks, BodyJointMoveNet.LEFT_ELBOW)
-        r_elbow = self._get_point(landmarks, BodyJointMoveNet.RIGHT_ELBOW)
+        l_elbow = self._get_point(landmarks, BodyJoint.LEFT_ELBOW)
+        r_elbow = self._get_point(landmarks, BodyJoint.RIGHT_ELBOW)
 
-        l_wrist = self._get_point(landmarks, BodyJointMoveNet.LEFT_WRIST)
-        r_wrist = self._get_point(landmarks, BodyJointMoveNet.RIGHT_WRIST)
+        l_wrist = self._get_point(landmarks, BodyJoint.LEFT_WRIST)
+        r_wrist = self._get_point(landmarks, BodyJoint.RIGHT_WRIST)
 
-        l_hip = self._get_point(landmarks, BodyJointMoveNet.LEFT_HIP)
-        r_hip = self._get_point(landmarks, BodyJointMoveNet.RIGHT_HIP)
+        l_hip = self._get_point(landmarks, BodyJoint.LEFT_HIP)
+        r_hip = self._get_point(landmarks, BodyJoint.RIGHT_HIP)
 
-        l_knee = self._get_point(landmarks, BodyJointMoveNet.LEFT_KNEE)
-        r_knee = self._get_point(landmarks, BodyJointMoveNet.RIGHT_KNEE)
+        l_knee = self._get_point(landmarks, BodyJoint.LEFT_KNEE)
+        r_knee = self._get_point(landmarks, BodyJoint.RIGHT_KNEE)
 
-        l_ankle = self._get_point(landmarks, BodyJointMoveNet.LEFT_ANKLE)
-        r_ankle = self._get_point(landmarks, BodyJointMoveNet.RIGHT_ANKLE)
+        l_ankle = self._get_point(landmarks, BodyJoint.LEFT_ANKLE)
+        r_ankle = self._get_point(landmarks, BodyJoint.RIGHT_ANKLE)
 
         # Elbow angles: shoulder - elbow - wrist
         left_elbow_angle = self._angle(l_shoulder, l_elbow, l_wrist) if l_elbow is not None else None
