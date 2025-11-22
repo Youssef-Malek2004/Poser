@@ -1,1 +1,6 @@
+# TODO: check versions that don't cause dependency issues
+# for mediapipe
 mediapipe
+# for movenet
+tensorflow
+opencv-python

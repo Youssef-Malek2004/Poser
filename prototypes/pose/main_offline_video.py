@@ -1,9 +1,6 @@
 from services.pose_engine.core.VideoProcessor import VideoProcessor
 from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
 from services.pose_engine.exercises.LatPullDownDetector import LatPullDownDetector
-from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
-from services.pose_engine.core.MoveNetPoseBackend import MoveNetPoseBackend
-
 def main(*, detector: str, backend: str):
     video_path = "prototypes/test-videos/pushup2.mp4"
 
@@ -15,8 +12,10 @@ def main(*, detector: str, backend: str):
         raise ValueError(f"Unknown detector: {detector}")
     
     if backend == "mediapipe":
+        from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
         backend = MediaPipePoseBackend(exercise_detector=detector)
     elif backend == "movenet":
+        from services.pose_engine.core.MoveNetPoseBackend import MoveNetPoseBackend
         backend = MoveNetPoseBackend(exercise_detector=detector)
     else:
         raise ValueError(f"Unknown backend: {backend}")

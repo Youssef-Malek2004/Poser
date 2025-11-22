@@ -3,3 +3,4 @@
 prototypes/test-videos/
 prototypes/pose/pose_frames
 __pycache__/
+*.ipynb
