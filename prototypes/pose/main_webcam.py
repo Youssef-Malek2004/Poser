@@ -1,6 +1,7 @@
 import cv2
 from services.pose_engine.exercises.PushUpDetector import PushUpStartDetector
 from services.pose_engine.exercises.LatPullDownDetector import LatPullDownDetector
+from services.pose_engine.core.MoveNetPoseBackend import MoveNetPoseBackend
 
 def main(*, detector: str = "pushup", backend: str = "mediapipe"):
     if detector == "pushup":
@@ -14,7 +15,6 @@ def main(*, detector: str = "pushup", backend: str = "mediapipe"):
         from services.pose_engine.core.MediaPipePoseBackend import MediaPipePoseBackend
         backend = MediaPipePoseBackend(exercise_detector=detector)
     elif backend == "movenet":
-        from services.pose_engine.core.MoveNetPoseBackend import MoveNetPoseBackend
         backend = MoveNetPoseBackend(exercise_detector=detector)
     else:
         raise ValueError(f"Unknown backend: {backend}")
@@ -25,6 +25,9 @@ def main(*, detector: str = "pushup", backend: str = "mediapipe"):
         print("Cannot open webcam")
         return
 
+    # Initialize crop region for MoveNet
+    crop_region = None
+
     while True:
         ret, frame_bgr = cap.read()
         if not ret:
@@ -32,7 +35,15 @@ def main(*, detector: str = "pushup", backend: str = "mediapipe"):
             break
 
         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-        landmarks = backend.process(frame_rgb)
+        
+        # Handle crop region for MoveNet
+        if isinstance(backend, MoveNetPoseBackend):
+            image_height, image_width, _ = frame_rgb.shape
+            if crop_region is None:
+                crop_region = backend.init_crop_region(image_height, image_width)
+            landmarks = backend.process(frame_rgb, crop_region)
+        else:
+            landmarks = backend.process(frame_rgb)
 
         if landmarks:
             current_reps = detector.update_reps(landmarks)
@@ -49,6 +60,11 @@ def main(*, detector: str = "pushup", backend: str = "mediapipe"):
                 2,
                 cv2.LINE_AA,
             )
+            
+            # Update crop region for next frame if using MoveNet
+            if isinstance(backend, MoveNetPoseBackend):
+                image_height, image_width, _ = frame_rgb.shape
+                crop_region = backend.determine_crop_region(landmarks, image_height, image_width)
         else:
             drawn_bgr = frame_bgr
 

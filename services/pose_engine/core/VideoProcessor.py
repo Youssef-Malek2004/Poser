@@ -1,6 +1,7 @@
 import os
 from typing import List, Dict, Any
 
+from services.pose_engine.core.MoveNetPoseBackend import MoveNetPoseBackend
 from services.pose_engine.core.VideoFrameExtractor import VideoFrameExtractor
 from services.pose_engine.core.BackendInterface import PoseBackend, Landmark
 
@@ -33,10 +34,17 @@ class VideoProcessor:
             List[dict]: each item has frame index, timestamp, and landmarks.
         """
         results_list: List[Dict[str, Any]] = []
+        crop_region = None
 
         for frame_rgb, frame_idx, t in self.frame_extractor.iter_frames(video_path):
-            landmarks: List[Landmark] = self.pose_backend.process(frame_rgb)
+            image_height, image_width, _ = frame_rgb.shape
+            if crop_region is None:
+                crop_region = self.pose_backend.init_crop_region(image_height, image_width)
 
+            if isinstance(self.pose_backend, MoveNetPoseBackend):
+                landmarks: List[Landmark] = self.pose_backend.process(frame_rgb, crop_region)
+            else:
+                landmarks: List[Landmark] = self.pose_backend.process(frame_rgb)
             if self.save_frames and landmarks:
                 drawn_bgr = self.pose_backend.draw(frame_rgb, landmarks)
                 # Save frame with pose drawn
@@ -52,5 +60,7 @@ class VideoProcessor:
                     "landmarks": landmarks,
                 }
             )
+            if isinstance(self.pose_backend, MoveNetPoseBackend):
+                crop_region = self.pose_backend.determine_crop_region(landmarks, image_height, image_width)
 
         return results_list

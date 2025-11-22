@@ -16,7 +16,7 @@ class PoseBackend(ABC):
     """Abstract base for any pose model (MediaPipe, MoveNet, etc.)."""
 
     @abstractmethod
-    def process(self, frame_rgb: np.ndarray) -> List[Landmark]:
+    def process(self, frame_rgb: np.ndarray, crop_region=None) -> List[Landmark]:
         """Run pose estimation on one RGB frame and return a list of landmarks."""
         ...
 
